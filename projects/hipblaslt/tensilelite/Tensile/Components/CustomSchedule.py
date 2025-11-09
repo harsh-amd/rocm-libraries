@@ -273,6 +273,7 @@ def hasCustomSchedule(kernel):
     is256x256x64DTL  = [MT0, MT1, DU, PGR, PLR, DTL] == [256, 256, 64, 2, 1, True]
     is192x256x64DTL  = [MT0, MT1, DU, PGR, PLR, DTL] == [192, 256, 64, 2, 1, True]
     is256x256x128DTL = [MT0, MT1, DU, PGR, PLR, DTL] == [256, 256, 128, 2, 0, True]
+    is256x240x64DTL  = [MT0, MT1, DU, PGR, PLR, DTL] == [256, 240, 64, 2, 1, True]
 
 
     transA = kernel["ProblemType"]["TransposeA"]
@@ -518,5 +519,39 @@ def hasCustomSchedule(kernel):
         numMfma = 96
         opt1 = ScheduleInfo(2, numMfma, optSchedule, syncCode)
         return True, opt1
+
+    elif is256x240x64DTL and is16bit and not isMixed and ([GRVWA, GRVWB, LRVW] == [8,2,8]) and MI == [16,16,32,1] and MIWG == [4,1]:
+        kernel["MfmaInitCVgprs"] = True
+        optSchedule = dict()
+        syncCode = []
+        if isTN and TLDS==1:
+            optSchedule = {
+                'SYNC'   : [[-1, 3, 26, 95, 95]],
+                'LRA0'   : [[0, 2, 3, 4]],
+                'GRIncA' : [[0, 0, 0, 1, 1, 1, 2, 2, 2]],
+                'GRIncB' : [[3, 3, 3, 4, 4, 4, 5, 5, 5]],
+                'LRB0'   : [[1, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]],
+                'GRA'    : [[16, 16, 18, 18, 20, 20, 22, 22, 24, 24, 26, 26, 28, 28, 30, 30]],
+                'GRB'    : [[40, 40, 42, 42, 44, 44, 46, 46, 47, 47, 49, 49, 51, 51, 53, 53, 55, 55, 56, 56, 59, 59, 60, 60, 62, 62, 64, 64, 66, 66, 67, 67, 69, 69, 71, 71, 73, 73, 75, 75, 76, 76, 78, 78, 80, 80, 82, 82, 84, 84, 86, 86, 87, 87, 89, 89, 91, 91, 93, 93]],
+                'LRSA'   : [[59]],
+                'LRSB'   : [[59]],
+                'LWSA'   : [[94]],
+                'LWSB'   : [[94]],
+                'LRA1'   : [[96, 98, 99, 100]],
+                'LRB1'   : [[97, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114]],
+                'LCC'    : [[119, 119]],
+            }
+            syncCode = [
+                SWaitCnt(dscnt=12, vlcnt=-1, vscnt=-1, comment="wait for prior local read local write old=0, new=12 (optimal from profiling)"),
+                SWaitCnt(dscnt=4, vlcnt=-1, vscnt=-1, comment="wait for prior local read local write (Phase 1A winner)"),
+                SBarrier(comment=""),
+                SWaitCnt(dscnt=-1, vlcnt=38, vscnt=-1, comment="wait for previous set of global reads"),
+                SBarrier(comment=""),
+            ]
+            numMfma = 120
+            opt1 = ScheduleInfo(1, numMfma, optSchedule, syncCode)
+            return True, opt1
+        else:
+            return False, None
 
     return False, None

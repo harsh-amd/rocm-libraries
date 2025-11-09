@@ -1,0 +1,206 @@
+BenchmarkProblems:
+- - Activation: true
+    ActivationFuncCall: false
+    ActivationType: hipblaslt_all
+    Batched: true
+    BiasDataTypeList:
+    - s
+    - b
+    ComputeDataType: S
+    DataType: B
+    DestDataType: B
+    HighPrecisionAccumulate: true
+    OperationType: GEMM
+    TransposeA: 1
+    TransposeB: 0
+    UseBeta: true
+    UseBias: 1
+    UseScaleAB: Scaler
+    UseScaleAlphaVec: 1
+  - BenchmarkCommonParameters:
+    - KernelLanguage:
+      - Assembly
+    BenchmarkFinalParameters:
+    - ProblemSizes:
+      - Exact:
+        - 4096
+        - 3840
+        - 1
+        - 8192
+    - BiasTypeArgs:
+      - b
+    BenchmarkJoinParameters: null
+    ForkParameters:
+    - 1LDSBuffer:
+      - 0
+      ActivationFuncCall:
+      - false
+      AssertFree0ElementMultiple:
+      - 1
+      AssertSummationElementMultiple:
+      - 1
+      ClusterLocalRead:
+      - 0
+      ConvertAfterDS:
+      - false
+      DirectToVgprA:
+      - false
+      DirectToVgprB:
+      - false
+      DirectToLds:
+      - 1
+      ExpandPointerSwap:
+      - false
+      ForceDisableShadowInit:
+      - false
+      GlobalReadPerMfma:
+      - 1
+      GlobalReadVectorWidthA:
+      - 8
+      GlobalReadVectorWidthB:
+      - 2
+      GlobalSplitU:
+      - 0
+      GlobalSplitUAlgorithm:
+      - MultipleBuffer
+      GroupLoadStore:
+      - false
+      InnerUnroll:
+      - 1
+      LDSTrInst:
+      - false
+      LdsBlockSizePerPadA:
+      - 1024
+      LdsBlockSizePerPadB:
+      - 256
+      LdsBlockSizePerPadMetadata:
+      - 0
+      LdsPadA:
+      - 16
+      LdsPadB:
+      - 16
+      LdsPadMetadata:
+      - 0
+      LocalReadVectorWidth:
+      - 8
+      LocalWritePerMfma:
+      - -1
+      MIArchVgpr:
+      - false
+      MatrixInstruction:
+      - - 16
+        - 16
+        - 32
+        - 1
+        - 1
+        - 4
+        - 15
+        - 4
+        - 1
+      MaxOccupancy:
+      - 40
+      NonTemporal:
+      - -1
+      NonTemporalA:
+      - 0
+      NonTemporalB:
+      - 0
+      NonTemporalC:
+      - 6
+      NonTemporalD:
+      - 4
+      NonTemporalMetadata:
+      - 0
+      NumElementsPerBatchStore:
+      - 0
+      NumLoadsCoalescedA:
+      - 1
+      NumLoadsCoalescedB:
+      - 1
+      OptNoLoadLoop:
+      - 1
+      PrefetchGlobalRead:
+      - 2
+      PrefetchLocalRead:
+      - 1
+      DepthU:
+      - 64
+      PreloadKernArgs:
+      - true
+      ScheduleIterAlg:
+      - 3
+      SourceSwap:
+      - true
+      StorePriorityOpt:
+      - true
+      StoreRemapVectorWidth:
+      - 0
+      StoreSyncOpt:
+      - 1
+      StoreVectorWidth:
+      - 4
+      StreamK:
+      - 3
+      StreamKFixupTreeReduction:
+      - 0
+      StreamKXCCMapping:
+      - 0
+      TransposeLDS:
+      - 1
+      UnrollLoopSwapGlobalReadOrder:
+      - 0
+      Use64bShadowLimit:
+      - true
+      UseInstOffsetForGRO:
+      - 0
+      UseSgprForGRO:
+      - 0
+      UseCustomMainLoopSchedule:
+      - 0
+      - 1
+      VectorStore:
+      - -1
+      VectorWidthA:
+      - 4
+      VectorWidthB:
+      - 1
+      WaveSeparateGlobalReadA:
+      - 0
+      WaveSeparateGlobalReadB:
+      - 0
+      WavefrontSize:
+      - 64
+      WorkGroup:
+      - - 64
+        - 4
+        - 1
+    InitialSolutionParameters: null
+GlobalParameters:
+  CSVExportWinner: 1
+  CSVMergeSameProblemID: 1
+  DataInitTypeA: 12
+  DataInitTypeAlpha: 1
+  DataInitTypeB: 13
+  DataInitTypeBeta: 0
+  Device: 0
+  DeviceLDS: 163840
+  EnqueuesPerSync: 100
+  ForceGenerateKernel: 1
+  KeepBuildTmp: true
+  MaxLDS: 163840
+  NewClient: 2
+  NumElementsToValidate: -1
+  NumWarmups: 100
+  PrintSolutionRejectionReason: true
+  RotatingBufferSize: 512
+  SleepPercent: 50
+LibraryLogic:
+  ArchitectureName: gfx950
+  DeviceNames:
+  - Device 0049
+  ScheduleName: gfx950
+TestParameters:
+  marks:
+  - skip-gfx1100
+  - skip-gfx1101
+  - skip-gfx1102
